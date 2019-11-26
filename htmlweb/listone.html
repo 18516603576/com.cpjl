@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>单页面_文章</title>
+		<link rel="stylesheet" type="text/css" href="css/public/base.css"/> 
+		<link rel="stylesheet" type="text/css" href="css/listone/index.css"/> 
+	</head>
+	<body> 
+		<div class="notice">
+			<div class="notice-bg"></div>
+			<marquee behavior="scroll" direction="left"  loop="infinite"  width="100%"   height="110px"    scrollamount="10" scrolldelay="100" onMouseOut="this.start()" onMouseOver="this.stop()">
+                                热烈欢迎各位领导莅临指导
+			</marquee> 
+		</div>
+		
+		<div class="main">
+			 <div class="mLeft">
+			 	 <!-- <div class="firstCat">水文相关知识</div>
+			 	  <a class="secondCat" href="">水法</a>
+			 	  <a class="secondCat active" href="">水土保持法</a>
+			 	  <a class="secondCat" href="">水文条例<a>
+			 	  <a class="secondCat" href="">水污染防治法</a>
+			 	  <a class="secondCat" href="">云南水文条例</a>  -->
+			 </div>
+			 <div class="mRight">
+			 	 <div class="container">
+			 	 	
+			 	 </div>
+			 </div> 
+			
+		</div>
+		
+		<div class="footer">
+			 <a class="btn home-btn" href="index.html"></a>
+			<a class="btn back-btn" href="javascript:history.back()"></a>
+			<a class="btn next-btn" href="javascript:window.history.forward()"></a>
+		</div>
+
+
+<script src="js/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="js/base.js"></script>
+<script type="text/javascript" src="js/jquery.nicescroll.js"></script>
+
+<script>
+	function App(){
+		this.id = $.getUrlParam("id");  
+		this.articlecat = null;
+		this.currentArticlecat = null;
+		this.article = null;
+		
+		this.findArticlecatList(this.id);
+		this.getArticle(this.currentArticlecat);
+		this.showArticlecatList(this.articlecat);
+		this.showArticle(this.article);
+		
+	} 
+	//获取栏目列表，并计算出当前栏目id
+    App.prototype.findArticlecatList = function(id){
+    	var _this = this;   
+	    $.ajax({ 
+		    async:false,
+	        type:"GET", 
+	        url: $.api+"/articlecat/selfAndChildren?id="+id, 
+	        dataType:"json",      
+	       // contentType:"application/json",               
+	        data: {}, 
+			error: function(xhr,err,errInfo){
+				//alert(xhr.responseText);
+				alert(errInfo);   
+			},  
+	        success:function(res){    
+	             console.log(res);   
+	             if(res.result){ 
+	             	_this.articlecat = res.model;   
+	             	
+	             	//访问的是主栏目，如果有子栏目则访问第一个 
+	             	var children = res.model.children; 
+	                if(children.length==0){
+	                	if(res.model.id==id){
+	                		_this.currentArticlecat = res.model;
+	                	} 
+	                }else{
+	                	 if(res.model.id==id){ 
+	                		id =  children[0].id; 
+	                     }
+	                	
+	                	for(var i=0;i<children.length;i++){
+		                	 if(children[i].id==id){
+		                	    _this.currentArticlecat = children[i];
+		                	 }
+	                    }
+	                } 
+	                 
+	             }else{
+	             	alert(res.message);
+	             }
+	        } 
+	    });  
+	}
+    //获取文章
+    App.prototype.getArticle = function(articlecat){
+    	var _this = this; 
+    	var url = $.api+"/article/listone?articlecatid="+articlecat.id; 
+	    $.ajax({ 
+		    async:false,
+	        type:"GET", 
+	        url: url, 
+	        dataType:"json",      
+	       // contentType:"application/json",               
+	        data: {}, 
+			error: function(xhr,err,errInfo){
+				//alert(xhr.responseText);
+				alert(errInfo);   
+			},  
+	        success:function(res){    
+	             console.log(res);  
+	             if(res.result){
+	             	 _this.article = res.model;
+	             }else{
+	             	alert(res.message);
+	             }
+	        } 
+	    });  
+	}
+    //显示栏目列表
+	App.prototype.showArticlecatList = function(model){
+        if(model==null){ return; }
+		var html =  '<div class="firstCat">'+model.name+'</div>';
+		var children = model.children; 
+		 
+		for(var i=0;i<children.length;i++){
+			var activeClass = "";
+			if(this.currentArticlecat.id==children[i].id){
+				activeClass = "active";
+			} 
+			var  href = "listone.html?id=" + children[i].id;
+			if(children[i].type==2){
+				href = "listword.html?id=" + children[i].id;
+			}else if(children[i].type==3){
+				href = "listimg.html?id=" + children[i].id;
+			}
+			html = html + '<a class="secondCat '+activeClass+'" href="'+href+'">'+children[i].name+'</a>';
+		}  
+		$(".main .mLeft").html(html); 
+	}
+	
+	//显示单篇文章
+	App.prototype.showArticle = function(article){
+        if(article==null){ return; }
+        html =  '<div class="title">'+article.title+'</div>';
+		html = html + '<div class="cont">'+article.content+'</div>';         
+		$(".main .mRight .container").html(html); 
+	}
+	 
+	
+	var app = new App();
+	
+</script>
+
+
+
+<script type="text/javascript">
+            $('.container').niceScroll({
+                cursorcolor: "#cccccc",//#CC0071 光标颜色
+                cursoropacitymax: 1, //改变不透明度非常光标处于活动状态（scrollabar“可见”状态），范围从1到0
+                touchbehavior: false, //使光标拖动滚动像在台式电脑触摸设备
+                cursorwidth: "5px", //像素光标的宽度
+                cursorborder: "0", // 	游标边框css定义
+                cursorborderradius: "5px",//以像素为光标边界半径
+                autohidemode: false //是否隐藏滚动条
+            });
+</script>		 
+	</body>
+</html>

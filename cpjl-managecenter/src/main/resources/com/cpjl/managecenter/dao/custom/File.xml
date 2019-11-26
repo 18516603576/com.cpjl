@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpjl.managecenter.dao.FileDao"> 
+	<!-- 插入实体 -->
+	<insert id="insert" parameterType="com.cpjl.managecenter.entity.File">
+		INSERT INTO FILE (
+		   	ID,
+		   	NAME,
+		   	SIZE,
+		   	URL,
+		   	SRC,
+		   	DEVICE_ID,
+		   	EXT,
+		   	TYPE,
+		   	CREATE_TIME
+		) VALUES (
+		   	#{id,jdbcType=BIGINT},
+		   	#{name,jdbcType=VARCHAR},
+		   	#{size,jdbcType=BIGINT},
+		   	#{url,jdbcType=VARCHAR},
+		   	#{src,jdbcType=VARCHAR},
+		   	#{deviceId,jdbcType=INTEGER},
+		   	#{ext,jdbcType=VARCHAR},
+		   	#{type,jdbcType=INTEGER},
+		   	#{createTime,jdbcType=TIMESTAMP}
+		)
+		<selectKey   keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey> 
+	</insert>
+
+	<!-- 更新实体 -->
+	<update id="update" parameterType="com.cpjl.managecenter.entity.File">
+		UPDATE FILE
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				SIZE = #{size,jdbcType=BIGINT},
+			</if>
+			<if test="url != null">
+				URL = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="src != null">
+				SRC = #{src,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceId != null">
+				DEVICE_ID = #{deviceId,jdbcType=INTEGER},
+			</if>
+			<if test="ext != null">
+				EXT = #{ext,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				TYPE = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<!-- 更新实体 -->
+	<update id="updateFields" parameterType="com.cpjl.managecenter.entity.File">
+		UPDATE FILE
+		<set>
+			NAME = #{name,jdbcType=VARCHAR},
+			SIZE = #{size,jdbcType=BIGINT},
+			URL = #{url,jdbcType=VARCHAR},
+			SRC = #{src,jdbcType=VARCHAR},
+			DEVICE_ID = #{deviceId,jdbcType=INTEGER},
+			EXT = #{ext,jdbcType=VARCHAR},
+			TYPE = #{type,jdbcType=INTEGER},
+			CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+		</set>
+		WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 删除实体 -->
+	<update id="delete" parameterType="com.cpjl.managecenter.entity.File">
+		DELETE FROM FILE WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询字段 -->
+	<sql id="selectFieldSQL">
+		SELECT 
+		       ID id,
+		       NAME name,
+		       SIZE size,
+		       URL url,
+		       SRC src,
+		       DEVICE_ID deviceId,
+		       EXT ext,
+		       TYPE type,
+		       CREATE_TIME createTime
+	</sql>
+
+	<!-- 查询 -->
+	<select id="get" parameterType="map" resultType="com.cpjl.managecenter.entity.File">
+		<include refid="selectFieldSQL" />
+		  FROM FILE
+		 WHERE ID = #{id,jdbcType=INTEGER}
+	</select>
+
+	<!-- 查询 -->
+	<select id="find" parameterType="com.cpjl.managecenter.entity.File" resultType="com.cpjl.managecenter.entity.File">
+		<include refid="selectFieldSQL" />
+		  FROM FILE
+		<where>
+			<if test="id != null">
+				AND ID = #{id,jdbcType=INTEGER}
+			</if>
+			<if test="name != null and name != ''">
+				AND NAME = #{name,jdbcType=VARCHAR}
+			</if>
+			<if test="size != null">
+				AND SIZE = #{size,jdbcType=BIGINT}
+			</if>
+			<if test="url != null and url != ''">
+				AND URL = #{url,jdbcType=VARCHAR}
+			</if>
+			<if test="src != null and src != ''">
+				AND SRC = #{src,jdbcType=VARCHAR}
+			</if>
+			<if test="deviceId != null">
+				AND DEVICE_ID = #{deviceId,jdbcType=INTEGER}
+			</if>
+			<if test="ext != null and ext != ''">
+				AND EXT = #{ext,jdbcType=VARCHAR}
+			</if>
+			<if test="type != null">
+				AND TYPE = #{type,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+
+	<!-- 查询所有 -->
+	<select id="findAll" parameterType="map" resultType="com.cpjl.managecenter.entity.File">
+		<include refid="selectFieldSQL" />
+		  FROM FILE
+	</select>
+
+	<!-- 分页查询（条件） -->
+	<sql id="page_condition">
+		<where>
+				<if test="entity.name != null and entity.name != ''">
+					AND NAME = #{entity.name,jdbcType=VARCHAR}
+				</if>
+				<if test="entity.size != null">
+					AND SIZE = #{entity.size,jdbcType=BIGINT}
+				</if>
+				<if test="entity.url != null and entity.url != ''">
+					AND URL = #{entity.url,jdbcType=VARCHAR}
+				</if>
+				<if test="entity.src != null and entity.src != ''">
+					AND SRC = #{entity.src,jdbcType=VARCHAR}
+				</if>
+				<if test="entity.deviceId != null">
+					AND DEVICE_ID = #{entity.deviceId,jdbcType=INTEGER}
+				</if>
+				<if test="entity.ext != null and entity.ext != ''">
+					AND EXT = #{entity.ext,jdbcType=VARCHAR}
+				</if>
+				<if test="entity.type != null">
+					AND TYPE = #{entity.type,jdbcType=INTEGER}
+				</if>
+		</where>
+	</sql>
+
+	<!-- 分页查询（计数） -->
+	<select id="page_count" parameterType="map" resultType="int">
+		SELECT count(*)
+		  FROM FILE
+		<include refid="page_condition" />
+	</select>
+
+	<!-- 分页查询（数据） -->
+	<select id="page_datas" parameterType="map" resultType="com.cpjl.managecenter.entity.File">
+		<include refid="pageStartSQL" />
+		<include refid="selectFieldSQL" />
+		  FROM FILE
+		<include refid="page_condition" />
+		<include refid="pageEndSQL" />
+	</select>
+	
+	<sql id="pageStartSQL" >  
+	</sql>
+	<sql id="pageEndSQL" > 
+		<if test="page != null">
+		<![CDATA[
+		limit #{page.offset}, #{page.limit}
+		]]>
+		</if>
+	</sql>
+
+</mapper>   

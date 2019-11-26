@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpjl.managecenter.dao.UserDao">
+<!--1、登录时，根据用户名获取用户 -->
+	<select id="getByUserName" parameterType="map" resultType="com.cpjl.managecenter.entity.User">
+		<include refid="selectFieldSQL" />
+		  FROM USER
+		 WHERE USER_NAME = #{userName,jdbcType=VARCHAR}
+	</select>
+	
+	
+<!-- 2、分页查询（条件） -->
+	<sql id="paging_condition">
+		<where>
+				<if test="entity.wd != null and entity.wd != ''">
+					AND USER_NAME like  '%${entity.wd}%'
+				</if>
+				  
+		</where>
+	</sql>
+
+	<!-- 分页查询（计数） -->
+	<select id="paging_count" parameterType="map" resultType="int">
+		SELECT count(*)
+		  FROM USER
+		<include refid="paging_condition" />
+	</select>
+
+	<!-- 分页查询（数据） -->
+	<select id="paging_datas" parameterType="map" resultType="com.cpjl.managecenter.entity.User">
+		<include refid="pageStartSQL" />
+		<include refid="selectFieldSQL" />
+		  FROM USER
+		<include refid="paging_condition" />
+		 order by   id desc 
+		<include refid="pageEndSQL" />
+	</select>
+	
+	<!-- 3、删除实体 -->
+	<update id="delete" parameterType="com.cpjl.managecenter.entity.User">
+		DELETE FROM USER WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<!-- 4、更新实体 -->
+	<update id="update" parameterType="com.cpjl.managecenter.entity.User">
+		UPDATE USER
+		<set>
+			<if test="userName != null">
+				USER_NAME = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="realName != null">
+				REAL_NAME = #{realName,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				PASSWORD = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="mobile != null">
+				MOBILE = #{mobile,jdbcType=VARCHAR},
+			</if>
+			<if test="avartar != null">
+				AVARTAR = #{avartar,jdbcType=VARCHAR},
+			</if>
+			<if test="position != null">
+				POSITION = #{position,jdbcType=VARCHAR},
+			</if>
+			<if test="isAble != null">
+				IS_ABLE = #{isAble,jdbcType=BOOLEAN},
+			</if>
+			<if test="roleId != null">
+				ROLE_ID = #{roleId,jdbcType=INTEGER},
+			</if>
+			<if test="lastLoginIp != null">
+				LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+			</if>
+			<if test="lastLoginTime != null">
+				LAST_LOGIN_TIME = #{lastLoginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="loginTimes != null">
+				LOGIN_TIMES = #{loginTimes,jdbcType=INTEGER},
+			</if>
+			<if test="passwordErrorTimes != null">
+				PASSWORD_ERROR_TIMES = #{passwordErrorTimes,jdbcType=INTEGER},
+			</if>
+		</set>
+		WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+	
+	
+	<!-- 5、插入实体 -->
+	<insert id="insert" parameterType="com.cpjl.managecenter.entity.User">
+		INSERT INTO USER (
+		   	ID,
+		   	USER_NAME,
+		   	REAL_NAME,
+		   	PASSWORD,
+		   	MOBILE,
+		   	AVARTAR,
+		   	POSITION,
+		   	IS_ABLE,
+		   	ROLE_ID,
+		   	LAST_LOGIN_IP,
+		   	LAST_LOGIN_TIME,
+		   	LOGIN_TIMES,
+		   	PASSWORD_ERROR_TIMES
+		) VALUES (
+		   	#{id,jdbcType=INTEGER},
+		   	#{userName,jdbcType=VARCHAR},
+		   	#{realName,jdbcType=VARCHAR},
+		   	#{password,jdbcType=VARCHAR},
+		   	#{mobile,jdbcType=VARCHAR},
+		   	#{avartar,jdbcType=VARCHAR},
+		   	#{position,jdbcType=VARCHAR},
+		   	#{isAble,jdbcType=BOOLEAN},
+		   	#{roleId,jdbcType=INTEGER},
+		   	#{lastLoginIp,jdbcType=VARCHAR},
+		   	#{lastLoginTime,jdbcType=TIMESTAMP},
+		   	#{loginTimes,jdbcType=INTEGER},
+		   	#{passwordErrorTimes,jdbcType=INTEGER}
+		)
+		<selectKey  keyProperty="id" order="AFTER" resultType="long">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey> 
+	</insert>
+	
+		<!--6、 查询 -->
+	<select id="get" parameterType="map" resultType="com.cpjl.managecenter.entity.User">
+		<include refid="selectFieldSQL" />
+		  FROM USER
+		 WHERE ID = #{id,jdbcType=INTEGER}
+	</select>
+	
+	
+	<!-- 查询字段 -->
+	<sql id="selectFieldSQL">
+		SELECT 
+		       ID id,
+		       USER_NAME userName,
+		       REAL_NAME realName,
+		       PASSWORD password,
+		       MOBILE mobile,
+		       AVARTAR avartar,
+		       POSITION position,
+		       IS_ABLE isAble,
+		       ROLE_ID roleId,
+		       LAST_LOGIN_IP lastLoginIp,
+		       LAST_LOGIN_TIME lastLoginTime,
+		       LOGIN_TIMES loginTimes,
+		       PASSWORD_ERROR_TIMES passwordErrorTimes
+	</sql>
+	<sql id="pageStartSQL" >  
+	</sql>
+	<sql id="pageEndSQL" > 
+		<if test="page != null">
+		<![CDATA[
+		limit #{page.offset}, #{page.limit}
+		]]>
+		</if>
+	</sql>
+	
+</mapper>   

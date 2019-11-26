@@ -1,0 +1,15 @@
+@charset "UTF-8";
+.div-upload{ float:left; margin-right:20px; margin-top:15px;     position:relative;  width:88px; height:88px;     text-align:center;      }
+.div-upload .div-preview{ position:absolute;   width:88px; height:88px;border:solid 1px #ccc; background: url(../../img/ico-add-image.png) no-repeat center; background-size:60%; margin:0 auto;  z-index:1;}
+.div-upload img{ max-width:88px; max-height:88px;}
+.div-upload .div-selectFile{ position:absolute; width:88px; height:88px; overflow:hidden; z-index:2; }
+.div-upload .selectFile{  width:88px; height:88px; opacity:0;  } 
+ 
+.div-upload .div-del{ position:absolute; top:-15px; right:-15px; width:25px; height:25px;  float:right;  
+background: url(ico-del.png) no-repeat; background-size:cover;     
+z-index:3; display:none; }   
+.div-upload .div-del.active{ display:block;  }    
+ 
+.div-upload .div-clear{ position:absolute; top:-15px; right:-15px; width:25px; height:25px;  float:right;  
+background: url(ico-del.png) no-repeat; background-size:cover;      
+z-index:3;   }   

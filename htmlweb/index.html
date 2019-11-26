@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>首页</title>
+		<link rel="stylesheet" type="text/css" href="css/public/base.css"/> 
+		<link rel="stylesheet" type="text/css" href="css/index/index.css"/> 
+	  
+	</head>
+	<body> 
+		<div class="notice">
+			<div class="notice-bg"></div>
+			<marquee behavior="scroll" direction="left"  loop="infinite"  width="100%"   height="110px"    scrollamount="10" scrolldelay="100" onMouseOut="this.start()" onMouseOver="this.stop()">
+                               热烈欢迎各位领导莅临指导
+			</marquee> 
+		</div>
+		
+		<div class="nav"> 
+			<a class="one cat1 articlecat" href="javascript:;" data-id="1"></a>
+			<a class="one cat2 articlecat" href="javascript:;" data-id="2"></a>
+			<a class="one cat3 articlecat" href="javascript:;" data-id="3"></a> 
+			<a class="one cat4 articlecat" href="javascript:;" data-id="4"></a>
+			<a class="one cat5 articlecat" href="javascript:;" data-id="5"></a>
+			<a class="one cat6 articlecat" href="javascript:;" data-id="6"></a>
+			<a class="one cat7 articlecat" href="javascript:;" data-id="7"></a>
+			<a class="one cat8" href="listvideo.html?id=1"></a> 
+		</div>
+		
+ <script src="js/jquery-1.11.1.js"></script> 
+<script type="text/javascript" src="js/base.js"></script>
+<script>
+	 
+	function App(){
+		this.articlecatList = null;
+		this.findAll();
+		this.setArticlecatUrl();
+	} 
+	//获取栏目列表，并计算出当前栏目id
+    App.prototype.findAll = function(){ 
+    	var _this = this;   
+	    $.ajax({ 
+		    async:false,
+	        type:"GET", 
+	        url: $.api+"/articlecat/findAll", 
+	        dataType:"json",      
+	       // contentType:"application/json",               
+	        data: {}, 
+			error: function(xhr,err,errInfo){
+				//alert(xhr.responseText);
+				alert(errInfo);   
+			},  
+	        success:function(res){    
+	             console.log(res);   
+	             if(res.result){ 
+	             	_this.articlecatList = res.model;    
+	             }else{
+	             	alert(res.message);
+	             }
+	        } 
+	    });   
+	}
+    
+    //获取栏目列表，并计算出当前栏目id
+    App.prototype.setArticlecatUrl = function(){
+    	var list = $(".nav .articlecat");
+    	for(var i=0;i<list.length;i++){
+    		var id = parseInt(list.eq(i).attr("data-id")); 
+    		
+    		var cat = this.articlecatList;
+    		for(var j=0;j<cat.length;j++){
+    			if(cat[j].id==id){  
+    				//获取当前栏目类型
+    				var children = cat[j].children;
+    				if(children.length==0){
+    					type=cat[j].type;
+    				}else{
+    					type=children[0].type;
+    				}
+    				//根据当前栏目类型，设置url
+    				var  url = "listone.html?id="+id;
+    				if(type==2){
+    					url = "listword.html?id="+id;
+    				}else if(type==3){
+    					url = "listimg.html?id="+id;
+    				}
+    				list.eq(i).attr("href",url); 
+    				break; 
+    				
+    			}
+    		}
+    	}
+    }
+		var app = new App(); 
+	</script>	  
+	</body>
+</html>

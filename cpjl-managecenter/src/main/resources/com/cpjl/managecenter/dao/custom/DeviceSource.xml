@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpjl.managecenter.dao.DeviceSourceDao">
+<!-- 查询 -->
+	<select id="getByDeviceId" parameterType="int" resultType="com.cpjl.managecenter.entity.DeviceSource">
+		<include refid="selectFieldSQL" />
+		  FROM DEVICE_SOURCE
+		 WHERE DEVICE_ID = #{deviceId,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 查询字段 -->
+	<sql id="selectFieldSQL">
+		SELECT 
+		       DEVICE_ID deviceId,
+		       IP ip,
+		       USERNAME username,
+		       PASSWORD password,
+		       PORT port
+	</sql>
+	<sql id="pageStartSQL" >  
+	</sql>
+	<sql id="pageEndSQL" > 
+		<if test="page != null">
+		<![CDATA[
+		limit #{page.offset}, #{page.limit}
+		]]>
+		</if>
+	</sql>
+</mapper>    

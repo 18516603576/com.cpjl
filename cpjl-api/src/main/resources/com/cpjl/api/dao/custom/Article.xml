@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpjl.api.dao.ArticleDao">
+<!-- 1、栏目下第一篇文章 -->
+	<select id="getByArticlecatid" parameterType="int" resultType="com.cpjl.api.entity.Article">
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLE
+		<where> 
+			<if test="articlecatid != null">
+				AND ARTICLECATID = #{articlecatid,jdbcType=INTEGER}
+			</if> 
+		</where>
+		order by idx asc,id desc
+		limit 0,1
+	</select>
+	 
+	
+	<!-- 2、分页查询（条件） -->
+	<sql id="paging_condition">
+		<where> 
+				<if test="entity.wd != null and entity.wd != ''">
+					AND TITLE like  '%${entity.wd}%'
+				</if>
+				 
+				<if test="entity.articlecatid != null">
+					AND ARTICLECATID = #{entity.articlecatid,jdbcType=INTEGER}
+				</if> 
+		</where>
+	</sql>
+	
+
+	<!-- 分页查询（计数） -->
+	<select id="paging_count" parameterType="map" resultType="int">
+		SELECT count(*)
+		  FROM ARTICLE
+		<include refid="paging_condition" />
+	</select>
+
+	<!-- 分页查询（数据） -->
+	<select id="paging_datas" parameterType="map" resultType="com.cpjl.api.entity.Article">
+		<include refid="pageStartSQL" />
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLE
+		<include refid="paging_condition" /> 
+		order by idx asc,id desc
+		<include refid="pageEndSQL" />
+	</select> 
+	
+	<!-- 3.查询 -->
+	<select id="get" parameterType="int" resultType="com.cpjl.api.entity.Article">
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLE
+		 WHERE ID = #{id,jdbcType=INTEGER}
+	</select>
+
+	<!-- 查询字段 -->
+	<sql id="selectFieldSQL">
+		SELECT 
+		       ID id,
+		       TITLE title, 
+		       ARTICLECATID articlecatid,
+		       IMG img,
+		       CONTENT content,
+		       USERID userid,
+		       CREATETIME createtime,
+		       IDX idx
+	</sql>
+	<sql id="pageStartSQL" >  
+	</sql>
+	<sql id="pageEndSQL" > 
+		<if test="page != null">
+		<![CDATA[
+		limit #{page.offset}, #{page.limit}
+		]]>
+		</if>
+	</sql>
+
+	 
+
+</mapper>   

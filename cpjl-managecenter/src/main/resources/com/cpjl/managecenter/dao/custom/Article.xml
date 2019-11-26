@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpjl.managecenter.dao.ArticleDao">
+<!-- 1、栏目下是否存在文章 -->
+	<select id="getOneByArticlecatid" parameterType="int" resultType="com.cpjl.managecenter.entity.Article">
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLE
+		<where> 
+			<if test="articlecatid != null">
+				AND ARTICLECATID = #{articlecatid,jdbcType=INTEGER}
+			</if> 
+		</where>
+		limit 0,1
+	</select>
+	
+	
+	<!-- 2、分页查询（条件） -->
+	<sql id="paging_condition">
+		<where> 
+				<if test="entity.wd != null and entity.wd != ''">
+					AND TITLE like  '%${entity.wd}%'
+				</if>
+				 
+				<if test="entity.articlecatid != null">
+					AND ARTICLECATID = #{entity.articlecatid,jdbcType=INTEGER}
+				</if> 
+		</where>
+	</sql>
+	
+
+	<!-- 分页查询（计数） -->
+	<select id="paging_count" parameterType="map" resultType="int">
+		SELECT count(*)
+		  FROM ARTICLE
+		<include refid="paging_condition" />
+	</select>
+
+	<!-- 分页查询（数据） -->
+	<select id="paging_datas" parameterType="map" resultType="com.cpjl.managecenter.entity.Article">
+		<include refid="pageStartSQL" />
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLE
+		<include refid="paging_condition" /> 
+		order by id desc
+		<include refid="pageEndSQL" />
+	</select>
+	
+	<!--3. 插入实体 -->
+	<insert id="insert" parameterType="com.cpjl.managecenter.entity.Article">
+		INSERT INTO ARTICLE (
+		   	ID,
+		   	TITLE, 
+		   	ARTICLECATID,
+		   	IMG,
+		   	CONTENT,
+		   	USERID,
+		   	CREATETIME,
+		   	IDX
+		) VALUES (
+		   	#{id,jdbcType=INTEGER},
+		   	#{title,jdbcType=VARCHAR}, 
+		   	#{articlecatid,jdbcType=INTEGER},
+		   	#{img,jdbcType=VARCHAR},
+		   	#{content,jdbcType=VARCHAR},
+		   	#{userid,jdbcType=INTEGER},
+		   	#{createtime,jdbcType=TIMESTAMP},
+		   	#{idx,jdbcType=INTEGER}
+		)
+		<selectKey  keyProperty="id" order="AFTER" resultType="int">
+			SELECT LAST_INSERT_ID() AS ID
+		</selectKey>
+		 
+	</insert>
+	
+	<!-- 4、获取一条记录 -->
+	<select id="get" parameterType="int" resultType="com.cpjl.managecenter.entity.Article">
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLE
+		 WHERE ID = #{id,jdbcType=INTEGER}
+	</select>
+	 <!-- 5、更新实体 -->
+	<update id="update" parameterType="com.cpjl.managecenter.entity.Article">
+		UPDATE ARTICLE
+		<set>
+			TITLE = #{title,jdbcType=VARCHAR},
+			ARTICLECATID = #{articlecatid,jdbcType=INTEGER},
+			IMG = #{img,jdbcType=VARCHAR},
+			CONTENT = #{content,jdbcType=VARCHAR},
+			USERID = #{userid,jdbcType=INTEGER},
+			CREATETIME = #{createtime,jdbcType=TIMESTAMP},
+			IDX = #{idx,jdbcType=INTEGER},
+		</set>
+		WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 6、删除一条记录 -->
+	<update id="delete" parameterType="int">
+		DELETE FROM ARTICLE WHERE ID = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 查询字段 -->
+	<sql id="selectFieldSQL">
+		SELECT 
+		       ID id,
+		       TITLE title, 
+		       ARTICLECATID articlecatid,
+		       IMG img,
+		       CONTENT content,
+		       USERID userid,
+		       CREATETIME createtime,
+		       IDX idx
+	</sql>
+	<sql id="pageStartSQL" >  
+	</sql>
+	<sql id="pageEndSQL" > 
+		<if test="page != null">
+		<![CDATA[
+		limit #{page.offset}, #{page.limit}
+		]]>
+		</if>
+	</sql>
+
+	 
+
+</mapper>   

@@ -1,0 +1,29 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+  <div id="header">
+       <div class="top">
+          <div class="c">                  
+          <a href="javascript:;" class="a">请登录</a>
+          <a href="javascript:;" class="a">收藏本站</a>
+          <a href="javascript:;" class="a">首页</a>
+          <a href="javascript:;" class="a">关于我们</a>
+          <a href="javascript:;" class="a">联系我们</a>
+          </div>
+       </div>
+       
+       <ul class="theme">
+          <a class="logo" href="javascript:;"><img src="${pageContext.request.contextPath}/static/image/logo.png" alt="中国板栗行业联盟"></a>       
+          <a href="javascript:;" class="ad_header"><img src="${pageContext.request.contextPath}/static/image/ad_header.png" height="60" /></a>    
+       </ul>
+       
+       <div class="nav">
+         <ul class="c">
+           <li class="col1">
+             <a href="${pageContext.request.contextPath}/supplyAction_listUI.action">供应</a>
+             <a href="javascript:;">求购</a>
+             <a href="javascript:;">行情</a>
+             <a href="javascript:;">商户</a>
+           </li>
+          </ul>  
+       </div>
+  </div>

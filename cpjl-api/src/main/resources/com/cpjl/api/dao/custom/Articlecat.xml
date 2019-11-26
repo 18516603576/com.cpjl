@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>   
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cpjl.api.dao.ArticlecatDao">
+
+<!-- 1、获取子栏目 -->
+	<select id="findByParentid" parameterType="java.lang.Integer" resultType="com.cpjl.api.dto.ArticlecatDto">
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLECAT
+		<where> 
+			<if test="parentid != null">
+				AND PARENTID = #{parentid,jdbcType=INTEGER}
+			</if>
+		</where>
+		order by idx asc
+	</select>  
+	
+	<!-- 2、获取一条记录 -->
+	<select id="get" parameterType="int" resultType="com.cpjl.api.dto.ArticlecatDto">
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLECAT
+		 WHERE ID = #{id,jdbcType=INTEGER}
+	</select> 
+	
+	<!-- 3、获取第一层栏目 -->
+	<select id="findFirstLevel"   resultType="com.cpjl.api.dto.ArticlecatDto">
+		<include refid="selectFieldSQL" />
+		  FROM ARTICLECAT
+		<where>
+			<if test="true">
+				AND parentid is null
+			</if>
+		</where>
+		order by idx asc
+	</select>
+	 
+
+	<!-- 查询字段 -->
+	<sql id="selectFieldSQL">
+		SELECT 
+		       ID id,
+		       NAME name,
+		       IDX idx,
+		       PARENTID parentid,
+		       TYPE type,
+		       CREATETIME createtime 
+	</sql>
+    <sql id="pageStartSQL" >  
+	</sql>
+	<sql id="pageEndSQL" > 
+		<if test="page != null">
+		<![CDATA[
+		limit #{page.offset}, #{page.limit}
+		]]>
+		</if>
+	</sql>
+	 
+
+</mapper>   

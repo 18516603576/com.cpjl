@@ -1,0 +1,65 @@
+/* CSS Document */
+*{ margin:0px;padding:0px; font-size:14px;}
+body{ color:#000000;font-size:12px; background:#fff; margin:0 auto; font-family:"宋体"; font-weight:normal;}
+li{ list-style-type:none;}
+img{ border:none; padding:0px;}
+
+a{ text-decoration:none;outline:none;hide-focus:expression(this.hideFocus=true);}   
+a:link,a:visited{ color:#004b91;}
+a:hover,a:active{ color:#e66e1e; text-decoration:underline; }
+
+
+
+/* 
+input[button]    .pb
+input[text]      .pt
+input[radio]     .pr
+input[checkbox]   .pc
+select            .ps
+ */
+.pr,.ps,select{ border:1px solid #ccc;   }
+.pt,.pc,.pr,textarea{ border:1px solid #ccc; border-top:1px solid #999; border-left:1px solid #999;   }
+.pb{ border:1px solid #ccc;  border-bottom:1px solid #666999; border-right:1px solid #666999;  }
+.pt,textarea{  padding:4px; } 
+
+.pb{  width:90px; height:30px;   }
+.pt{ width:146px;   }
+.pr, .pc { vertical-align: middle; margin: 0 5px 1px 0; padding: 0; }
+select {  padding: 4px;    }
+
+.pb:hover{ background-color:#F7F7F7; }
+
+
+
+
+
+.fl{ float:left; }
+.l{  text-align:left; }
+.r{  text-align:right; }
+.c{  text-align:center;}
+
+.divline{ border-bottom:solid 1px #ccc; height:0px; width:100%; margin-top:10px; margin-bottom:10px; }
+.errors{ line-height:24px; }
+
+.w450{ width:450px; }
+.w350{ width:350px; }
+.w250{ width:250px;}
+.w80{ width:80px; }
+.w50{ width:50px; }
+
+.red{ color:#ff0000; }
+.clear{ clear:both; }
+
+
+.select2{ height:18px; line-height:18px;  padding-left:4px; padding-right:4px; border:1px solid #ccc; color:#000; overflow:hidden;  }
+.select2 li{ float:left; line-height:18px; }
+.select2 #ico{ width:18px;  }
+
+.div_select2{ width:100%; }
+.div_select2 ul{ float:left;}
+
+label.error{ color:#f00; } 
+
+
+ 
+	 

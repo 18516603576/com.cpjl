@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>图片列表</title>
+		<link rel="stylesheet" type="text/css" href="css/public/base.css"/> 
+		<link rel="stylesheet" type="text/css" href="css/listimg/index.css"/> 
+	</head>
+	<body>  
+		<div class="notice">
+			<div class="notice-bg"></div>
+			<marquee behavior="scroll" direction="left"  loop="infinite"  width="100%"   height="110px"    scrollamount="10" scrolldelay="100" onMouseOut="this.start()" onMouseOver="this.stop()">
+                                热烈欢迎各位领导莅临指导
+			</marquee> 
+		</div>
+		
+		<div class="main">
+			 <div class="mLeft">
+			 	 <!-- <div class="firstCat">水文相关知识</div>
+			 	  <a class="secondCat" href="">水法</a>
+			 	  <a class="secondCat active" href="">水土保持法</a>
+			 	  <a class="secondCat" href="">水文条例<a>
+			 	  <a class="secondCat" href="">水污染防治法</a>
+			 	  <a class="secondCat" href="">云南水文条例</a>  -->
+			 </div>
+			 <div class="mRight">
+			 	 <div class="container"> 
+			 	 	 <div class="list">
+			 	 	     
+			 	 		 
+			 	 	</div>
+			 	     <div class="paging">
+			 	 		<!--<a href="javascript:;">&lt;上一页</a>
+			 	 		<span>1/2</span> 
+			 	 		<a href="javascript:;">下一页&gt;</a> -->
+			 	 	 </div>
+			 	 </div>
+			 </div> 
+			
+		</div>
+		
+		<div class="footer">
+			 <a class="btn home-btn" href="index.html"></a>
+			<a class="btn back-btn" href="javascript:history.back()"></a>
+			<a class="btn next-btn" href="javascript:window.history.forward()"></a>
+		</div>
+		
+		
+		 <div id="article-box-alpha"></div>
+		 <div id="article-box"> 
+		    <div id="div-article">
+		    	 <div class="atitle"></div> 
+		         <div class="acontent"></div> 
+		    	 <div id="close-btn"></div>
+		    </div>   
+		    
+		 </div>
+
+
+<script src="js/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="js/base.js"></script>
+<script type="text/javascript" src="js/jquery.nicescroll.js"></script>
+
+<script>
+	function App(){
+		this.id = $.getUrlParam("id"); 
+		this.currentPage = $.getUrlParam("page.currentPage"); 
+		if(!this.currentPage ){
+			this.currentPage = 1;
+		}
+		
+		this.articlecat = null;
+		this.currentArticlecat = null;
+		this.articleList = null;
+		this.page = null;
+		
+		this.findArticlecatList(this.id);
+		this.getArticleList(this.currentArticlecat,this.currentPage);
+		
+		this.showArticlecatList(this.articlecat);
+		this.showArticleList(this.articleList); 
+		
+	} 
+	//获取栏目列表，并计算出当前栏目id
+    App.prototype.findArticlecatList = function(id){
+    	var _this = this;   
+	    $.ajax({ 
+		    async:false,
+	        type:"GET", 
+	        url: $.api+"/articlecat/selfAndChildren?id="+id, 
+	        dataType:"json",      
+	       // contentType:"application/json",               
+	        data: {}, 
+			error: function(xhr,err,errInfo){
+				//alert(xhr.responseText);
+				alert(errInfo);   
+			},  
+	        success:function(res){    
+	             console.log(res);   
+	             if(res.result){ 
+	             	_this.articlecat = res.model;   
+	             	
+	             	//访问的是主栏目，如果有子栏目则访问第一个 
+	             	var children = res.model.children; 
+	                if(children.length==0){
+	                	if(res.model.id==id){
+	                		_this.currentArticlecat = res.model;
+	                	} 
+	                }else{
+	                	 if(res.model.id==id){ 
+	                		id =  children[0].id; 
+	                     }
+	                	
+	                	for(var i=0;i<children.length;i++){
+		                	 if(children[i].id==id){
+		                	    _this.currentArticlecat = children[i];
+		                	 }
+	                    }
+	                } 
+	                 
+	             }else{
+	             	alert(res.message);
+	             }
+	        } 
+	    });  
+	}
+    //获取文章
+    App.prototype.getArticleList = function(articlecat,currentPage){
+    	var _this = this; 
+    	var url = $.api+"/article/list?articlecatid="+articlecat.id+"&page.currentPage="+currentPage; 
+	    $.ajax({ 
+		    async:false,
+	        type:"GET", 
+	        url: url, 
+	        dataType:"json",      
+	       // contentType:"application/json",               
+	        data: {}, 
+			error: function(xhr,err,errInfo){
+				//alert(xhr.responseText);
+				alert(errInfo);   
+			},  
+	        success:function(res){    
+	             console.log(res);  
+	             if(res.result){
+	             	 _this.articleList = res.model.list;
+	             	 _this.page = res.model.page;
+	             }else{
+	             	alert(res.message);
+	             }
+	        } 
+	    });  
+	}
+    //显示栏目列表
+	App.prototype.showArticlecatList = function(model){
+        if(model==null){ return; }
+		var html =  '<div class="firstCat">'+model.name+'</div>';
+		var children = model.children; 
+		 
+		for(var i=0;i<children.length;i++){
+			var activeClass = "";
+			if(this.currentArticlecat.id==children[i].id){
+				activeClass = "active";
+			} 
+			var  href = "listone.html?id=" + children[i].id;
+			if(children[i].type==2){
+				href = "listword.html?id=" + children[i].id;
+			}else if(children[i].type==3){
+				href = "listimg.html?id=" + children[i].id;
+			}
+			html = html + '<a class="secondCat '+activeClass+'" href="'+href+'">'+children[i].name+'</a>';
+		}  
+		$(".main .mLeft").html(html); 
+	}
+	
+	//显示单篇文章
+	App.prototype.showArticleList = function(list){
+        if(list==null){ return; }
+        var html = '';
+        for(var i=0;i<list.length;i++){
+        	html = html + '<div class="one" data-id="'+list[i].id+'">';
+        	if(list[i].img==''){
+        		html = html + '<img src="img/public/no.png" />';
+        	}else{
+        		html = html + '<img src="'+list[i].img+'" />';
+        	} 
+        	html = html + '<p>'+list[i].title+'</p>';
+        	html = html + '</div>';    		 
+        }  
+		$(".main .mRight .container .list").html(html); 
+		this.showPage(this.page);
+	}
+	
+	//显示单篇文章
+	App.prototype.showPage = function(page){
+        if(page==null){ return; }
+        var html = '';
+        if(page.currentPage<=1){
+        	html = html + '<a href="javascript:;" class="grey">&lt;上一页</a>';
+        }else{
+        	var url = "?id="+this.id+"&page.currentPage="+(page.currentPage-1);
+        	html = html + '<a href="'+url+'">&lt;上一页</a>';
+        }
+        
+        html = html + '<span>'+page.currentPage+'/'+page.pageCount+'</span>';
+        
+        if(page.currentPage>=page.pageCount){
+        	html = html + '<a href="javascript:;" class="grey">下一页&gt;</a>';
+        }else{
+        	var url = "?id="+this.id+"&page.currentPage="+(page.currentPage+1);
+        	html = html + '<a href="'+url+'">下一页&gt;</a>';
+        } 
+     
+        
+			 	 		 
+			 	 		 
+		$(".main .mRight .container .paging").html(html); 
+	}
+	
+	
+	
+	
+	
+	var app = new App();
+	
+</script>
+<script>
+	   var acontentScroll = $('.acontent').niceScroll({
+					                cursorcolor: "#cccccc",//#CC0071 光标颜色
+					                cursoropacitymax: 1, //改变不透明度非常光标处于活动状态（scrollabar“可见”状态），范围从1到0
+					                touchbehavior: false, //使光标拖动滚动像在台式电脑触摸设备
+					                cursorwidth: "5px", //像素光标的宽度
+					                cursorborder: "0", // 	游标边框css定义
+					                cursorborderradius: "5px",//以像素为光标边界半径
+					                autohidemode: false //是否隐藏滚动条
+	    });
+	    acontentScroll.hide();
+	      
+            
+			function playerbox(opts){
+				this.opts = opts;
+				this.close();
+				this.show(); 
+			}
+			 
+			playerbox.prototype.close = function(){
+				var _this = this;
+				$(_this.opts.container+" #close-btn").on("click",function(){
+					$(_this.opts.container+"-alpha").fadeOut();
+					$(_this.opts.container).hide(); 
+					acontentScroll.hide();
+				})
+			}
+			playerbox.prototype.show = function(){
+				var _this = this;
+				$(_this.opts.container+"-alpha").width($(document).width()); 
+				$(_this.opts.container+"-alpha").height($(document).height()); 
+			 
+				$(_this.opts.oneVideo).on("click",function(){
+					 
+					var id = $(this).attr("data-id"); 
+				    _this.changeArticle(id);  
+					$(_this.opts.container+"-alpha").fadeIn();
+					
+					 
+					$(_this.opts.container).css({"width":"10%","height":"10%","left":"50%","top":"50%"});    
+					$(_this.opts.container).show();
+					$(_this.opts.container).animate({"width":"70%","height":"80%","left":"15%","top":"10%" },200,function(){
+						        acontentScroll.show();
+					            acontentScroll.resize(); 
+					});
+					
+					
+					 
+				})
+			}
+			
+			//切换文章
+			playerbox.prototype.changeArticle = function(id){
+				    var _this = this; 
+				    $.ajax({ 
+					    async:false,
+				        type:"GET", 
+				        url: $.api+"/article/get?id="+id, 
+				        dataType:"json",      
+				       // contentType:"application/json",               
+				        data: {}, 
+						error: function(xhr,err,errInfo){
+							//alert(xhr.responseText);
+							alert(errInfo);   
+						},  
+				        success:function(res){    
+				             console.log(res);   
+				             if(res.result){ 
+				             	var article = res.model;  
+				             	 
+		                        $("#article-box #div-article .atitle").html(article.title);
+		                        $("#article-box #div-article .acontent").html(article.content);
+		                        
+				             	
+				             }else{
+				             	alert(res.message);
+				             }
+				        } 
+				    });  
+			}
+			var obj = {
+				  "container":"#article-box" 
+				 ,"oneVideo":".container .list .one"
+			}
+		var playerbox1 = new playerbox(obj);
+		
+ 
+	       
+            
+             
+</script>		 
+
+
+
+	</body>
+</html>
