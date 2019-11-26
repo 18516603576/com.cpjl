@@ -1,0 +1,36 @@
+触屏精灵部署
+1 客户端
+ 在触摸屏上安装触屏精灵客户端，通过网址访问html页面 
+
+2 html页面
+部署在IIS下
+端口：7003
+http://172.16.34.135/index.html
+
+3 图片及视频
+后台上传的图片视频都在此目录下： D:/cpdata/upload
+端口：7004
+
+4接口
+Springboot项目，部署后，可在windows服务里找到
+服务名称：cpjl-api-0.0.1-SNAPSHOT
+端口：7001
+
+5 后台
+Springboot项目，部署后，可在windows服务里找到
+服务名称：cpjl-managecenter-0.0.1-SNAPSHOT
+端口：7002
+
+网址及账号
+http://172.16.34.135:7002/managecenter/
+用户名：admin
+密码：cpjl123456
+
+6运行环境
+Win7 + Jdk1.8  +  mysql57
+数据库端口：3306
+用户名：root
+密码：zhd123456
+
+
+项目所有软件、代码、日志、图片视频，均保存在D:/cpdata下
